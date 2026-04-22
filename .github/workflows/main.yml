@@ -3,7 +3,7 @@ name: Deploy to AWS ECS
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   deploy:
@@ -22,7 +22,7 @@ jobs:
 
     - name: Login to Amazon ECR
       id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
+      uses: aws-actions/amazon-ecr-login@v1
 
     - name: Build and Push Docker Image
       env:
@@ -41,18 +41,29 @@ jobs:
       run: |
         aws ecs describe-task-definition \
           --task-definition ${{ secrets.ECS_TASK_DEFINITION }} \
-          --query taskDefinition > task-def.json
+          --query taskDefinition > task-def-raw.json
+        cat task-def-raw.json | jq 'del(
+          .enableFaultInjection,
+          .taskDefinitionArn,
+          .revision,
+          .status,
+          .requiresAttributes,
+          .placementConstraints,
+          .compatibilities,
+          .registeredAt,
+          .registeredBy
+        )' > task-def.json
 
     - name: Update ECS Task Definition with New Image
       id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v2
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: task-def.json
         container-name: ${{ secrets.ECS_CONTAINER_NAME }}
         image: ${{ env.IMAGE }}
 
     - name: Deploy to ECS Service
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: ${{ secrets.ECS_SERVICE_NAME }}
