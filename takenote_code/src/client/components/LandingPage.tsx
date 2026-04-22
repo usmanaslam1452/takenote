@@ -31,7 +31,7 @@ export const LandingPage: React.FC = () => {
               The Note Taking App
               <br /> for Developers
             </h1>
-            <p className="subtitle">A web-based notes app for developers.</p>
+            <p className="subtitle">A web-based notes app for DevOps Engineer developers.</p>
             {isMobile ? (
               <p className="p-mobile">
                 TakeNote is not currently supported for tablet and mobile devices.
@@ -52,7 +52,7 @@ export const LandingPage: React.FC = () => {
               <div className="new-signup">
                 <div>
                   <p>
-                    TakeNote does not have a database or users. It simply links with your GitHub
+                    TakeNote does not have a database or users. It simply for usman devops Engineer links with your GitHub
                     account for authentication, and stores the data in a private{' '}
                     <code>takenotes-data</code> repo.
                   </p>
